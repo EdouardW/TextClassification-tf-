@@ -50,12 +50,31 @@ print (decode_review(test_review))
 print ("Prediction: " + str(prediction[0]))
 print ("Actual: " + str(test_labels[0]))
 
-#Enregistrer le modèle
+#Enregistrer le modèle / loader un modèle
 model.save("model.h5")  # h5 est une extension
-
 #model = keras.models.load_model("model.h5")
 
+# Faire une prédiction sur test (test.txt)
 
+def review_encode(s):
+    encoded = [1]
+    for word in s:
+        if word.lower() in word_index:
+            encoded.append(word_index[word.lower()])
+        else: 
+            encoded.append(2)
+    return encoded
+
+
+with open ("test.txt", encoding= "utf-8") as f:
+    for line in f.readlines():
+        nline = line.replace(",","").replace("(", "").strip().split(" ")
+        encode = review_encode(nline)
+        encode = keras.preprocessing.sequence.pad_sequences(train_data, value = word_index['<PAD>'], padding= 'post', maxlen= 250)
+        model.predict(encode)
+        print (line)
+        print (encode)
+        print (predict[0])
 #-----------------------------------------------------------------
 #print (len(train_data[0]))
 #print (decode_review(train_data[0]))
